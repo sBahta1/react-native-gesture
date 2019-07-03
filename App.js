@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
-import { PanGestureHandler, state } from 'react-native-gesture-handler';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 export default class App extends React.Component {
   constructor() {
@@ -12,12 +12,24 @@ export default class App extends React.Component {
           translationX: this.translateX
         }
       }
-    ])
+    ],
+      { useNativeDriver: true }
+    );
+  }
+  onHandlerStateChange = event => {
+    if (event.nativeEvent.oldState == State.ACTIVE) {
+      Animated.timing(this.translateX, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
+    }
   }
   render() {
     return (
       <View style={styles.container}>
-        <PanGestureHandler onGestureEvent={this.onGestureEvent}>
+        <PanGestureHandler onGestureEvent={this.onGestureEvent}
+          onHandlerStateChange={this.onHandlerStateChange}>
           <Animated.View
             style={[
               styles.box,
@@ -37,6 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   box: {
     height: 100,
