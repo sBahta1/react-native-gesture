@@ -1,10 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Animated } from 'react-native';
+import { PanGestureHandler, state } from 'react-native-gesture-handler';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <PanGestureHandler>
+        <Animated.View style={styles.box} />
+      </PanGestureHandler>
     </View>
   );
 }
@@ -13,7 +16,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+  },
+  box: {
+    height: 100,
+    width: 100,
+    backgroundColor: 'red'
   },
 });
