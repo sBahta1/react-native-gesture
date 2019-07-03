@@ -2,14 +2,34 @@ import React from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
 import { PanGestureHandler, state } from 'react-native-gesture-handler';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <PanGestureHandler>
-        <Animated.View style={styles.box} />
-      </PanGestureHandler>
-    </View>
-  );
+export default class App extends React.Component {
+  constructor() {
+    super();
+    this.translateX = new Animated.Value(0)
+    this.onGestureEvent = Animated.event([
+      {
+        nativeEvent: {
+          translationX: this.translateX
+        }
+      }
+    ])
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <PanGestureHandler onGestureEvent={this.onGestureEvent}>
+          <Animated.View
+            style={[
+              styles.box,
+              {
+                transform: [{ translateX: this.translateX }]
+              }
+            ]}
+          />
+        </PanGestureHandler>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
