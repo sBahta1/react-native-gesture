@@ -1,35 +1,60 @@
 import React from 'react';
-import { StyleSheet, Text, View, Animated } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
+
+const {
+  set,
+  cond,
+  eq,
+  add,
+  spring,
+  startClock,
+  stopClock,
+  cloclRunning,
+  sub,
+  defined,
+  Value,
+  Clock,
+  event,
+} = Animated;
 
 export default class App extends React.Component {
   constructor() {
     super();
-    this.translateX = new Animated.Value(0)
-    this.onGestureEvent = Animated.event([
+    this.translateX = new Value(0)
+    const dragX = new Value(0)
+    const state = new Value(-1)
+
+    this.onGestureEvent = event([
       {
         nativeEvent: {
-          translationX: this.translateX
+          translationX: dragX,
+          state: state
         }
       }
-    ],
-      { useNativeDriver: true }
-    );
+    ]);
+
+    const transX = new Value();
+    this.translateX = cond(
+      eq(state, State.ACTIVE),
+      [
+        //state active
+        set(transX,dragX),
+        transX
+      ],
+      [
+        //state inactive
+        set(transX,0),
+        transX
+      ])
   }
-  onHandlerStateChange = event => {
-    if (event.nativeEvent.oldState == State.ACTIVE) {
-      Animated.timing(this.translateX, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    }
-  }
+
   render() {
     return (
       <View style={styles.container}>
         <PanGestureHandler onGestureEvent={this.onGestureEvent}
-          onHandlerStateChange={this.onHandlerStateChange}>
+          onHandlerStateChange={this.onGestureEvent}>
           <Animated.View
             style={[
               styles.box,
